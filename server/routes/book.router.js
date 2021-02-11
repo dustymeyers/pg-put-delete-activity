@@ -42,7 +42,36 @@ router.post('/', (req, res) => {
 // Request must include a parameter indicating what book to update - the id
 // Request body must include the content to update - the status
 
-// TODO - DELETE
+router.put('/isRead/:id', function (req, res) {
+  let reqId = req.params.id;
+
+  let boolean = req.body.isRead;
+  console.log(boolean);
+  let sqlText = '';
+
+  if (boolean === 'true') {
+    sqlText = `UPDATE "books" SET "isRead" = true WHERE "id" = $1`;
+  } else if (boolean === 'false') {
+    sqlText = `UPDATE "books" SET "isRead" = true WHERE "id" = $1`;
+  } else {
+    console.log('error sending boolean data');
+    // If we don't get an boolean, send back bad status
+    res.sendStatus(500);
+    return;
+  }
+
+  pool
+    .query(sqlText, [reqId])
+    .then((resDB) => {
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+});
+
+//
 // Removes a book to show that it has been read
 // Request must include a parameter indicating what book to update - the id
 

@@ -9,7 +9,9 @@ function addClickHandlers() {
 
   // delete event handler
   $('#bookShelf').on('click', '.delete-book', handleDelete);
-  // TODO - Add code for edit & delete buttons
+  // TODO - Add code for edit
+  // edit book if read
+  $('#bookShelf').on('click', '.mark-as-read', handleMarkAsRead);
 }
 
 function handleSubmit() {
@@ -23,6 +25,11 @@ function handleSubmit() {
 function handleDelete() {
   console.log('Pressed Delete', $(this).data('id'));
   deleteBook($(this).data('id'));
+}
+
+function handleMarkAsRead() {
+  console.log('Mark as read button clicked.');
+  markAsRead($(this).data('id'), true);
 }
 
 // adds a book to the database
@@ -69,6 +76,10 @@ function renderBooks(books) {
         <td>${book.title}</td>
         <td>${book.author}</td>
         <td>
+          ${book.isRead}
+          <button class="mark-as-read" data-id="${book.id}">Mark As Read</button>
+        </td>
+        <td>
           <button class="delete-book" data-id="${book.id}">Delete</button>
         </td>
       </tr>
@@ -88,5 +99,22 @@ function deleteBook(bookId) {
     })
     .catch((error) => {
       alert('There was an error', error);
+    });
+}
+
+function markAsRead(bookId, boolean) {
+  console.log(bookId, boolean);
+  $.ajax({
+    method: 'PUT',
+    url: `/books/isRead/${bookId}`,
+    data: {
+      isRead: boolean,
+    },
+  })
+    .then((response) => {
+      refreshBooks();
+    })
+    .catch((error) => {
+      alert('Here is your error', error);
     });
 }
